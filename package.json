@@ -1,0 +1,26 @@
+{
+  "name": "mean-sports-web",
+  "version": "1.0.0",
+  "description": "Proyecto en el MEAN Stack sobre encuentros deportivos",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcioMatteucci/mean-sports-web.git"
+  },
+  "author": "Marcio Matteucci",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MarcioMatteucci/mean-sports-web/issues"
+  },
+  "homepage": "https://github.com/MarcioMatteucci/mean-sports-web#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-promise-router": "^2.0.0",
+    "mongoose": "^4.12.6",
+    "morgan": "^1.9.0"
+  }
+}
