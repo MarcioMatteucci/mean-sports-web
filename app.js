@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 
 // Custom files imports
 const config = require('./config/index');
+const routes = require('./routes/index');
 
 //Express
 const app = express();
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
+app.use('/api', routes);
 
 // Start server
 const port = process.env.PORT || 3000;
