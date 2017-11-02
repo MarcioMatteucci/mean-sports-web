@@ -12,17 +12,15 @@ const routes = require('./routes/index');
 const app = express();
 
 // Mongoose
-mongoose.connect(config.localDbUri, { useMongoClient: true });
 mongoose.Promise = global.Promise;
+mongoose.connect(config.localDbUri, { useMongoClient: true });
 
-// On Connection
 mongoose.connection.on('connected', () => {
-   console.log('Connected to database: ' + config.localDbUri);
+   console.log('Conectado a la DB: ' + config.localDbUri);
 });
 
-// On Error
 mongoose.connection.on('error', (err) => {
-   console.log('Database error: ' + err);
+   console.log('Error en la conexion a la DB: ' + err);
 });
 
 // Middlewares
@@ -36,5 +34,5 @@ app.use('/api', routes);
 // Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-   console.log(`Server listening at ${port}`);
+   console.log(`Server escuchando en puerto ${port}`);
 });
