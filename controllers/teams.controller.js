@@ -6,7 +6,7 @@ module.exports = {
     Get All Teams
   ============== */
   getAllTeams: async (req, res, next) => {
-    // Todos los datos de la colleccion
+    // Todos los datos de la coleccion
     await Team.find((err, teams) => {
       if (err) {
         return res.status(500).json({ success: false, msg: err });
