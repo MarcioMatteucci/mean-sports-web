@@ -1,5 +1,6 @@
 const express = require('express');
-const router = require('express-promise-router')();
+// const router = require('express-promise-router')();
+const router = express.Router();
 
 const TeamsController = require('../controllers/teams.controller');
 
@@ -12,11 +13,10 @@ router.route('/:id')
 router.route('/')
    .post(TeamsController.createTeam);
 
-// router.route('/')
-//    .put(TeamsController.editTeam);
+router.route('/:id')
+   .put(TeamsController.editTeam);
 
-// router.route('/')
-//    .delete(TeamsController.deleteTeam);
-
+router.route('/:id')
+   .delete(TeamsController.deleteTeam);
 
 module.exports = router;
