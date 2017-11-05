@@ -1,5 +1,6 @@
+const { check, validationResult } = require('express-validator/check');
+
 const Event = require('../models/event.model');
-const validator = require('../helpers/validations');
 
 module.exports = {
    /* ==============
@@ -38,11 +39,13 @@ module.exports = {
     Create a New Event
    ================= */
    createEvent: async (req, res, next) => {
-      const type = await req.body.type;
 
-      if (validator.isEmpty(type)) {
-         return res.status(400).json({ success: false, msg: 'El campo Tipo de Evento es requerido' });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+         return res.status(400).json({ success: false, errors: errors.mapped() });
       }
+
+      const type = await req.body.type;
 
       const sameTypeEvent = await Event.findOne({ type: type });
       if (sameTypeEvent) {
@@ -64,11 +67,12 @@ module.exports = {
    editEvent: async (req, res, next) => {
       const id = await req.params.id;
 
-      const updatedType = await req.body.type;
-
-      if (validator.isEmpty(updatedType)) {
-         return res.status(400).json({ success: false, msg: 'El campo Tipo de Evento es requerido' });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+         return res.status(400).json({ success: false, errors: errors.mapped() });
       }
+
+      const updatedType = await req.body.type;
 
       const sameTypeEvent = await Event.findOne({ type: updatedType });
       if (sameTypeEvent) {

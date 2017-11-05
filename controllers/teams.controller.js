@@ -1,5 +1,6 @@
+const { check, validationResult } = require('express-validator/check');
+
 const Team = require('../models/team.model');
-const validator = require('../helpers/validations');
 
 module.exports = {
   /* ==============
@@ -41,13 +42,15 @@ module.exports = {
     Create a New Team
   ================= */
   createTeam: async (req, res, next) => {
+
+    // Validar si hay errores en los datos del body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
     // Datos del body
     const name = await req.body.name;
-
-    // Validar datos del body
-    if (validator.isEmpty(name)) {
-      return res.status(400).json({ success: false, msg: 'El campo Nombre es requerido' });
-    }
 
     // Validar que el team no exista
     const sameNameTeam = await Team.findOne({ name: name });
@@ -74,13 +77,14 @@ module.exports = {
     // Parametros
     const id = await req.params.id;
 
+    // Validar si hay errores en los datos del body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
     // Datos del body
     const updatedName = await req.body.name;
-
-    // Validar datos del body
-    if (validator.isEmpty(updatedName)) {
-      return res.status(400).json({ success: false, msg: 'El campo Nombre es requerido' });
-    }
 
     // Validar que el team no exista
     const sameNameTeam = await Team.findOne({ name: updatedName });
