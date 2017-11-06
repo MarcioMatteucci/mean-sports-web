@@ -21,6 +21,13 @@ module.exports = {
     Get a Team by Id
   ================ */
   getTeamById: async (req, res, next) => {
+
+    // Validar si hay errores en el Id q se pasa por parametro
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
     // Parametros
     const id = await req.params.id;
 
@@ -74,14 +81,15 @@ module.exports = {
     Update a Team
   ============== */
   editTeam: async (req, res, next) => {
-    // Parametros
-    const id = await req.params.id;
 
-    // Validar si hay errores en los datos del body
+    // Validar si hay errores en los datos del body y param
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.mapped() });
     }
+
+    // Parametros
+    const id = await req.params.id;
 
     // Datos del body
     const updatedName = await req.body.name;
@@ -116,6 +124,13 @@ module.exports = {
     Delete a Team
   ============== */
   deleteTeam: async (req, res, next) => {
+
+    // Validar si hay errores en el Id q se pasa por parametro
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
     // Parametros
     const id = await req.params.id;
 

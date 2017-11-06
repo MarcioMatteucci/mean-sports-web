@@ -7,6 +7,7 @@ module.exports = {
     Get All Events
    ============== */
    getAllEvents: async (req, res, next) => {
+
       await Event.find((err, events) => {
          if (err) {
             return res.status(500).json({ success: false, msg: err });
@@ -20,6 +21,12 @@ module.exports = {
     Get a Event by Id
    ================ */
    getEventById: async (req, res, next) => {
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+         return res.status(400).json({ success: false, errors: errors.mapped() });
+      }
+
       const id = await req.params.id;
 
       await Event.findById(id, (err, event) => {
@@ -65,13 +72,13 @@ module.exports = {
     Update a Event
    ============== */
    editEvent: async (req, res, next) => {
-      const id = await req.params.id;
 
-      const errors = validationResult(req);
+      const errors = await validationResult(req);
       if (!errors.isEmpty()) {
          return res.status(400).json({ success: false, errors: errors.mapped() });
       }
 
+      const id = await req.params.id;
       const updatedType = await req.body.type;
 
       const sameTypeEvent = await Event.findOne({ type: updatedType });
@@ -101,6 +108,12 @@ module.exports = {
     Delete a Team
    ============== */
    deleteEvent: async (req, res, next) => {
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+         return res.status(400).json({ success: false, errors: errors.mapped() });
+      }
+
       const id = await req.params.id;
 
       await Event.findByIdAndRemove(id, (err, event) => {
