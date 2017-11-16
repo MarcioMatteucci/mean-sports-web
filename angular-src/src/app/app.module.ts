@@ -12,12 +12,14 @@ import { EventComponent } from './components/event/event.component';
 // Services
 import { TeamService } from './services/team.service';
 import { EventService } from './services/event.service';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TeamComponent,
-    EventComponent
+    EventComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
