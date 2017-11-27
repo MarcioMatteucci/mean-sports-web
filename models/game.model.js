@@ -16,7 +16,7 @@ const gameSchema = new Schema({
         events: [{
             typeEvent: {
                 type: String,
-                required: false
+                required: true
             },
             player1: {
                 type: String,
