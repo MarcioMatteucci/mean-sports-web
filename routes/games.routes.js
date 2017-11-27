@@ -29,4 +29,21 @@ router.delete('/:id', [
     param('id').isMongoId().withMessage('No es un ID de Partido válido')
 ], GamesController.deleteGame);
 
+router.get('/:id/events', [
+    param('id').isMongoId().withMessage('No es un ID de Partido válido')
+], GamesController.getAllEvents);
+
+router.post('/:id/events', [
+    param('id').isMongoId().withMessage('No es un ID de Partido válido'),
+    sanitize('type').trim(),
+    check('type').not().isEmpty().withMessage('El campo Tipo es requerido'),
+    sanitize('team').trim(),
+    check('team').not().isEmpty().withMessage('El campo Equipo es requerido'),
+    check('team').isIn(['local', 'visiting']).withMessage('El campo Equipo debe ser "local" o "visiting"'),
+    sanitize('player1').trim(),
+    sanitize('player2').trim(),
+    sanitize('isOwnGoal').trim(),
+    check('isOwnGoal').optional().isBoolean().withMessage('El campo isOwnGoal debe ser booleano')
+], GamesController.createEvent);
+
 module.exports = router;

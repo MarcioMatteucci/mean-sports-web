@@ -25,6 +25,14 @@ const gameSchema = new Schema({
             player2: {
                 type: String,
                 required: false
+            },
+            isOwnGoal: { //gol en contra, solo si typeEvent === 'goal', player1 es del equipo contrario
+                type: Boolean,
+                required: false
+            },
+            eventAt: {
+                type: Date,
+                required: true
             }
         }]
     },
@@ -41,7 +49,7 @@ const gameSchema = new Schema({
         events: [{
             typeEvent: {
                 type: String,
-                required: false
+                required: true
             },
             player1: {
                 type: String,
@@ -50,6 +58,14 @@ const gameSchema = new Schema({
             player2: {
                 type: String,
                 required: false
+            },
+            isOwnGoal: { //gol en contra, solo si typeEvent === 'goal', player1 es del equipo contrario
+                type: Boolean,
+                required: false
+            },
+            eventAt: {
+                type: Date,
+                required: true
             }
         }]
     },
