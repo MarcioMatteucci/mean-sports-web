@@ -197,12 +197,23 @@ module.exports = {
     let event = { typeEvent: type, player1: player1, player2: player2, eventAt: Date.now() };
     let goalIncrement = 0;
     if (type === 'goal') {
+      if (player1 === undefined || player1 === '') {
+        return res.status(403).json({ success: false, msg: 'El campo player1 es requerido para un gol' });
+      }
+      if (player2 !== undefined && player2 !== '') {
+        return res.status(403).json({ success: false, msg: 'El campo player2 está prohibido para un gol' });
+      }
       goalIncrement = 1;
-      if (isOwnGoal === 'true' || isOwnGoal === 'false') {
+      if (isOwnGoal !== undefined && isOwnGoal !== '') { //ya está validado que es booleano
         event.isOwnGoal = JSON.parse(isOwnGoal);
       }
       else {
-        event.isOwnGoal = false; //fallback
+        return res.status(403).json({ success: false, msg: 'El campo isOwnGoal es requerido para un gol' });
+      }
+    }
+    else if (type === 'substitution') {
+      if ((player1 === undefined || player1 === '') || (player2 === undefined || player2 === '')) {
+        return res.status(403).json({ success: false, msg: 'Los campos player1 y player2 son requeridos para un cambio' });
       }
     }
 
