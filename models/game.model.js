@@ -12,29 +12,7 @@ const gameSchema = new Schema({
             type: Number,
             required: false,
             default: 0
-        },
-        events: [{
-            typeEvent: {
-                type: String,
-                required: true
-            },
-            player1: {
-                type: String,
-                required: false
-            },
-            player2: {
-                type: String,
-                required: false
-            },
-            isOwnGoal: { //gol en contra, solo si typeEvent === 'goal', player1 es del equipo contrario
-                type: Boolean,
-                required: false
-            },
-            eventAt: {
-                type: Date,
-                required: true
-            }
-        }]
+        }
     },
     visitingTeam: {
         name: {
@@ -45,29 +23,7 @@ const gameSchema = new Schema({
             type: Number,
             required: false,
             default: 0
-        },
-        events: [{
-            typeEvent: {
-                type: String,
-                required: true
-            },
-            player1: {
-                type: String,
-                required: false
-            },
-            player2: {
-                type: String,
-                required: false
-            },
-            isOwnGoal: { //gol en contra, solo si typeEvent === 'goal', player1 es del equipo contrario
-                type: Boolean,
-                required: false
-            },
-            eventAt: {
-                type: Date,
-                required: true
-            }
-        }]
+        }
     },
     start: {
         isStarted: {
@@ -90,7 +46,11 @@ const gameSchema = new Schema({
             type: Date,
             required: false
         }
-    }
+    },
+    events: [{
+        type: Schema.Types.ObjectId,
+        ref: 'event'
+    }],
 }, { timestamps: true });
 
 const Game = mongoose.model('game', gameSchema);

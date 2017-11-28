@@ -29,9 +29,9 @@ router.delete('/:id', [
     param('id').isMongoId().withMessage('No es un ID de Partido válido')
 ], GamesController.deleteGame);
 
-router.get('/:id/events', [
+/*router.get('/:id/events', [
     param('id').isMongoId().withMessage('No es un ID de Partido válido')
-], GamesController.getAllEvents);
+], GamesController.getAllEvents);*/
 
 router.post('/:id/events', [
     param('id').isMongoId().withMessage('No es un ID de Partido válido'),

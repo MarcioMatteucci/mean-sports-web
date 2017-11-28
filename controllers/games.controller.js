@@ -1,5 +1,7 @@
 const { check, validationResult } = require('express-validator/check');
 
+const mongoose = require('mongoose');
+
 const Game = require('../models/game.model');
 const Event = require('../models/event.model');
 
@@ -14,7 +16,13 @@ module.exports = {
         return res.status(500).json({ success: false, msg: err });
       }
 
-      res.status(200).json({ success: true, games: games });
+      Game.populate(games, { path: 'events' }, (err, games) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        res.status(200).json({ success: true, games: games });
+      });
     });
   },
 
@@ -143,34 +151,6 @@ module.exports = {
     });
   },
 
-  getAllEvents: async (req, res, next) => {
-
-    // Validar si hay errores en el Id q se pasa por parametro
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.mapped() });
-    }
-
-    const id = await req.params.id;
-
-    await Game.findById(id, (err, game) => {
-      if (err) {
-        return res.status(500).json({ success: false, msg: err });
-      }
-
-      if (!game) {
-        return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
-      }
-
-      if (!game.start.isStarted) {
-        console.log('no iniciado')
-        return res.status(400).json({ success: false, msg: 'El Partido no se ha iniciado' });
-      }
-
-      res.status(200).json({ success: true, localTeamEvents: game.localTeam.events, visitingTeamEvents: game.visitingTeam.events });
-    })
-  },
-
   createEvent: async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -206,14 +186,15 @@ module.exports = {
         return res.status(400).json({ success: false, msg: 'El Partido se ha finalizado' });
       }
 
-      // Validar que exista el tipo de evento
-      const eventType = Event.findOne({ type: type });
-      if (!eventType) {
-        return res.status(403).json({ success: false, msg: 'El tipo de evento no existe' });
-      }
-
       // Crear un evento con los datos del body
-      let event = { typeEvent: type, player1: player1, player2: player2, eventAt: Date.now() };
+      let newEvent = new Event({
+        type: type,
+        team: team,
+        game: game._id,
+        player1: player1,
+        player2: player2,
+        eventAt: Date.now()
+      });
       if (type === 'goal') {
         if (player1 === undefined || player1 === '') {
           return res.status(403).json({ success: false, msg: 'El campo player1 es requerido para un gol' });
@@ -222,7 +203,7 @@ module.exports = {
           return res.status(403).json({ success: false, msg: 'El campo player2 está prohibido para un gol' });
         }
         if (isOwnGoal !== undefined && isOwnGoal !== '') { //ya está validado que es booleano
-          event.isOwnGoal = JSON.parse(isOwnGoal);
+          newEvent.isOwnGoal = JSON.parse(isOwnGoal);
         }
         else {
           return res.status(403).json({ success: false, msg: 'El campo isOwnGoal es requerido para un gol' });
@@ -234,20 +215,24 @@ module.exports = {
         }
       }
 
-      const teamObj = (team === 'local') ? game.localTeam : game.visitingTeam;
-      teamObj.events.push(event);
-      if (type === 'goal') {
-        teamObj.goals++;
-      }
-
-      game.save((err, game) => {
+      newEvent.save((err, event) => {
         if (err) {
           return res.status(500).json({ success: false, msg: err });
         }
 
         const teamObj = (team === 'local') ? game.localTeam : game.visitingTeam;
-        const event = teamObj.events[teamObj.events.length - 1];
-        res.status(200).json({ success: true, msg: 'Evento agregado', event: event });
+        if (type === 'goal') {
+          teamObj.goals++;
+        }
+
+        game.events.push(event._id);
+        game.save((err, game) => {
+          if (err) {
+            return res.status(500).json({ success: false, msg: err });
+          }
+
+          res.status(200).json({ success: true, msg: 'Evento agregado', event: event });
+        });
       });
     });
   }
