@@ -12,7 +12,11 @@ const gameSchema = new Schema({
             type: Number,
             required: false,
             default: 0
-        }
+        },
+        events: [{
+            type: Schema.Types.ObjectId,
+            ref: 'event'
+        }]
     },
     visitingTeam: {
         name: {
@@ -23,7 +27,11 @@ const gameSchema = new Schema({
             type: Number,
             required: false,
             default: 0
-        }
+        },
+        events: [{
+            type: Schema.Types.ObjectId,
+            ref: 'event'
+        }]
     },
     start: {
         isStarted: {
@@ -46,11 +54,7 @@ const gameSchema = new Schema({
             type: Date,
             required: false
         }
-    },
-    events: [{
-        type: Schema.Types.ObjectId,
-        ref: 'event'
-    }],
+    }
 }, { timestamps: true });
 
 const Game = mongoose.model('game', gameSchema);

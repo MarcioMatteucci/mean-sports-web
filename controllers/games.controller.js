@@ -11,19 +11,83 @@ module.exports = {
   ============== */
   getAllGames: async (req, res, next) => {
 
-    await Game.find((err, games) => {
-      if (err) {
-        return res.status(500).json({ success: false, msg: err });
-      }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
 
-      Game.populate(games, { path: 'events' }, (err, games) => {
+    const condition = await req.query.c;
+
+    if (!condition) {
+      // Todos los partidos
+      await Game.find((err, games) => {
         if (err) {
           return res.status(500).json({ success: false, msg: err });
         }
 
         res.status(200).json({ success: true, games: games });
       });
+    }
+
+    if (condition === 'inProgress') {
+      // Partidos iniciados, no finalizados
+      await Game.find({ 'start.isStarted': true, 'finish.isFinished': false }, (err, games) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        res.status(200).json({ success: true, games: games });
+      });
+    }
+
+    if (condition === 'pending') {
+      // Partidos creados pero que no iniciaron
+      await Game.find({ 'start.isStarted': false }, (err, games) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        res.status(200).json({ success: true, games: games });
+      });
+    }
+
+    if (condition === 'finished') {
+      //Partidos Finalizados
+      await Game.find({ 'finish.isFinished': true }, (err, games) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        res.status(200).json({ success: true, games: games });
+      });
+    }
+
+  },
+
+  /* ===============
+   Get a Game by Id
+  =============== */
+  getGameById: async (req, res, next) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
+    const id = await req.params.id;
+
+    await Game.findById(id, (err, game) => {
+      if (err) {
+        return res.status(500).json({ success: false, msg: err });
+      }
+
+      if (!game) {
+        return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
+      }
+
+      res.status(200).json({ success: true, game: game });
     });
+
   },
 
   /* =================
@@ -51,6 +115,7 @@ module.exports = {
     await newGame.save();
 
     res.status(201).json({ success: true, msg: 'Partido creado', game: newGame });
+
   },
 
   /* =============
@@ -84,6 +149,7 @@ module.exports = {
 
         res.status(200).json({ success: true, msg: 'Partido iniciado', game: game });
       });
+
   },
 
   /* =============
@@ -123,6 +189,7 @@ module.exports = {
         res.status(200).json({ success: true, msg: 'Partido finalizado', game: game });
       });
     });
+
   },
 
   /* ===========
@@ -149,8 +216,12 @@ module.exports = {
 
       res.status(200).json({ success: true, msg: 'Partido eliminado', game: game });
     });
+
   },
 
+  /* ========
+  Add Event
+ ========= */
   createEvent: async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -189,17 +260,15 @@ module.exports = {
       // Crear un evento con los datos del body
       let newEvent = new Event({
         type: type,
-        team: team,
-        game: game._id,
         player1: player1,
-        player2: player2,
-        eventAt: Date.now()
+        player2: player2
       });
-      if (type === 'goal') {
-        if (player1 === undefined || player1 === '') {
+
+      if (type === 'Gol') {
+        if (!player1) {
           return res.status(403).json({ success: false, msg: 'El campo player1 es requerido para un gol' });
         }
-        if (player2 !== undefined && player2 !== '') {
+        if (player2) {
           return res.status(403).json({ success: false, msg: 'El campo player2 está prohibido para un gol' });
         }
         if (isOwnGoal !== undefined && isOwnGoal !== '') { //ya está validado que es booleano
@@ -209,8 +278,8 @@ module.exports = {
           return res.status(403).json({ success: false, msg: 'El campo isOwnGoal es requerido para un gol' });
         }
       }
-      else if (type === 'substitution') {
-        if ((player1 === undefined || player1 === '') || (player2 === undefined || player2 === '')) {
+      else if (type === 'Sustitución') {
+        if (!player1 || !player2) {
           return res.status(403).json({ success: false, msg: 'Los campos player1 y player2 son requeridos para un cambio' });
         }
       }
@@ -221,11 +290,13 @@ module.exports = {
         }
 
         const teamObj = (team === 'local') ? game.localTeam : game.visitingTeam;
-        if (type === 'goal') {
+        if (type === 'Gol') {
           teamObj.goals++;
         }
 
-        game.events.push(event._id);
+        // Cambio al modelo, los eventos son de cada equipo por separado y no del game
+        teamObj.events.push(event._id);
+
         game.save((err, game) => {
           if (err) {
             return res.status(500).json({ success: false, msg: err });
@@ -235,5 +306,45 @@ module.exports = {
         });
       });
     });
+
+  },
+
+  /* ============
+  Events by Game
+ ============= */
+  getEventsByGame: async (req, res, next) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
+    const id = await req.params.id;
+
+    await Game
+      .findById(id)
+      .populate('localTeam.events')
+      .populate('visitingTeam.events')
+      .exec(function (err, game) {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        if (!game) {
+          return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
+        }
+
+        const localEvents = game.localTeam.events;
+        const visitingEvents = game.visitingTeam.events;
+
+        return res.status(200).json({
+          success: true,
+          localEvents: localEvents,
+          visitingEvents: visitingEvents
+        });
+      });
+
   }
+
+
 }
