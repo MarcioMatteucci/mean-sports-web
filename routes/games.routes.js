@@ -60,4 +60,10 @@ router.get('/:id/events', [
     param('id').isMongoId().withMessage('No es un ID de Partido válido')
 ], GamesController.getEventsByGame);
 
+// Eliminar evento de un partido con su id
+router.delete('/:id/events/:idEvent', [
+    param('id').isMongoId().withMessage('No es un ID de Partido válido'),
+    param('idEvent').isMongoId().withMessage('No es un ID de Evento válido')
+], GamesController.deleteEvent);
+
 module.exports = router;

@@ -344,7 +344,56 @@ module.exports = {
         });
       });
 
+  },
+
+   /* ===========
+  Delete event by id
+ ============ */
+ deleteEvent: async (req, res, next) => {  
+    // Validar si hay errores en el Id que se pasa por parametro
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.mapped() });
+    }
+
+    //Parametros
+    const id = await req.params.id;
+    const idEvent = await req.params.idEvent;
+
+    //Elimina del array de eventos del game y despues de la coleccion de eventos
+    await Game.findById(id,(err, game) => {
+      if (err) {
+        return res.status(500).json({ success: false, msg: err });  
+      }
+      if (!game) {
+        return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
+      }if (game) {           
+        game.localTeam.events.pull(idEvent);
+        game.visitingTeam.events.pull(idEvent);
+        game.save((err, game) => {
+          if (err) {
+            return res.status(500).json({ success: false, msg: err });
+          }
+
+          //res.status(200).json({ success: true, msg: 'Evento eliminado', game: game });
+        });
+      } 
+
+
+      //Elimina de la colección de eventos
+      Event.findByIdAndRemove(idEvent, (err, event) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+        if (!event) {
+          return res.status(404).json({ success: false, msg: 'No se ha encontrado un evento con ese ID' });
+        }
+        
+        res.status(200).json({ success: true, msg: 'Evento eliminado', event: event });
+      });  
+
+    });
+
+        
   }
-
-
 }
