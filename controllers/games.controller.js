@@ -368,8 +368,8 @@ module.exports = {
       if (!game) {
         return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
       }
-      const localEventId = game.localTeam.events.find((id) => id.equals(mongoose.Types.ObjectId(idEvent)));
-      const visitingEventId = game.visitingTeam.events.find((id) => id.equals(mongoose.Types.ObjectId(idEvent)));
+      const localEventId = game.localTeam.events.find((id) => id.equals(idEvent));
+      const visitingEventId = game.visitingTeam.events.find((id) => id.equals(idEvent));
       if (localEventId || visitingEventId) {
         game.localTeam.events.pull(idEvent);
         game.visitingTeam.events.pull(idEvent);
