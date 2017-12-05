@@ -349,7 +349,7 @@ module.exports = {
    /* ===========
   Delete event by id
  ============ */
- deleteEvent: async (req, res, next) => {  
+ deleteEvent: async (req, res, next) => {
     // Validar si hay errores en el Id que se pasa por parametro
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -367,7 +367,10 @@ module.exports = {
       }
       if (!game) {
         return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });
-      }if (game) {           
+      }
+      const localEventId = game.localTeam.events.find((id) => id.equals(mongoose.Types.ObjectId(idEvent)));
+      const visitingEventId = game.visitingTeam.events.find((id) => id.equals(mongoose.Types.ObjectId(idEvent)));
+      if (localEventId || visitingEventId) {
         game.localTeam.events.pull(idEvent);
         game.visitingTeam.events.pull(idEvent);
         game.save((err, game) => {
@@ -377,23 +380,24 @@ module.exports = {
 
           //res.status(200).json({ success: true, msg: 'Evento eliminado', game: game });
         });
-      } 
 
+        //Elimina de la colección de eventos
+        Event.findByIdAndRemove(idEvent, (err, event) => {
+          if (err) {
+            return res.status(500).json({ success: false, msg: err });
+          }
+          if (!event) {
+            return res.status(404).json({ success: false, msg: 'No se ha encontrado un evento con ese ID' });
+          }
 
-      //Elimina de la colección de eventos
-      Event.findByIdAndRemove(idEvent, (err, event) => {
-        if (err) {
-          return res.status(500).json({ success: false, msg: err });
-        }
-        if (!event) {
-          return res.status(404).json({ success: false, msg: 'No se ha encontrado un evento con ese ID' });
-        }
-        
-        res.status(200).json({ success: true, msg: 'Evento eliminado', event: event });
-      });  
-
+          res.status(200).json({ success: true, msg: 'Evento eliminado', event: event });
+        });
+      }
+      else {
+        res.status(404).json({ success: false, msg: 'No se ha encontrado un evento con ese ID en el Partido' });
+      }
     });
 
-        
   }
+
 }
