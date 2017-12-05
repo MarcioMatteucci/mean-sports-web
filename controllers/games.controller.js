@@ -290,9 +290,6 @@ module.exports = {
         }
 
         const teamObj = (team === 'local') ? game.localTeam : game.visitingTeam;
-        if (type === 'Gol') {
-          teamObj.goals++;
-        }
 
         // Cambio al modelo, los eventos son de cada equipo por separado y no del game
         teamObj.events.push(event._id);
@@ -322,10 +319,7 @@ module.exports = {
     const id = await req.params.id;
 
     await Game
-      .findById(id)
-      .populate('localTeam.events')
-      .populate('visitingTeam.events')
-      .exec(function (err, game) {
+      .findById(id, (err, game) => {
         if (err) {
           return res.status(500).json({ success: false, msg: err });
         }

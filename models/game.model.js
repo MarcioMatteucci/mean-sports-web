@@ -8,11 +8,6 @@ const gameSchema = new Schema({
             type: String,
             required: true
         },
-        goals: {
-            type: Number,
-            required: false,
-            default: 0
-        },
         events: [{
             type: Schema.Types.ObjectId,
             ref: 'event'
@@ -22,11 +17,6 @@ const gameSchema = new Schema({
         name: {
             type: String,
             required: true
-        },
-        goals: {
-            type: Number,
-            required: false,
-            default: 0
         },
         events: [{
             type: Schema.Types.ObjectId,
@@ -55,7 +45,34 @@ const gameSchema = new Schema({
             required: false
         }
     }
-}, { timestamps: true });
+}, { timestamps: true, toObject: { virtuals: true }, toJSON: { virtuals: true } });
+
+const autoPopulateEvents = function(next) {
+    this.populate('localTeam.events').populate('visitingTeam.events');
+    next();
+};
+
+gameSchema.pre('findOne', autoPopulateEvents).pre('find', autoPopulateEvents);
+
+gameSchema.virtual('localTeam.goals').get(function () {
+    let goals = 0;
+    this.localTeam.events.forEach(event => {
+        if (event.type === 'Gol') {
+            goals++;
+        }
+    });
+    return goals;
+});
+
+gameSchema.virtual('visitingTeam.goals').get(function () {
+    let goals = 0;
+    this.visitingTeam.events.forEach(event => {
+        if (event.type === 'Gol') {
+            goals++;
+        }
+    });
+    return goals;
+});
 
 const Game = mongoose.model('game', gameSchema);
 
