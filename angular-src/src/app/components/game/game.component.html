@@ -1,0 +1,12 @@
+<div *ngIf="result?.games.length > 0">
+  <h1 class="text-center">Partidos activos</h1>
+  <div *ngFor="let game of result.games">
+    <div *ngIf="!game.finish.isFinished && game.start.isStarted" class="card mb-1">      
+      <div class="card-body text-center">       
+        <h2 class="card-text my-1"><a routerLink="/game/{{game._id}}" routerLinkActive="active"> {{ game.visitingTeam.name}} vs {{game.localTeam.name}}</a></h2>
+        <h2 class="card-text my-1">  {{ game.visitingTeam.goals}} a {{game.localTeam.goals}}</h2>
+        <p *ngIf="game.start.isStarted" class="card-text my-1"><strong>Fecha y hora de inicio: </strong> {{ game.start.startedAt | date:'dd/MM/yyyy h:mm a' }} </p>        
+      </div>
+    </div>
+  </div>
+</div>

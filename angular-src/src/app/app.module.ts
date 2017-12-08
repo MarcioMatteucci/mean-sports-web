@@ -13,13 +13,18 @@ import { EventComponent } from './components/event/event.component';
 import { TeamService } from './services/team.service';
 import { EventService } from './services/event.service';
 import { FooterComponent } from './components/footer/footer.component';
+import { GameComponent } from './components/game/game.component';
+import { GameService } from './services/game.service';
+import { GameDetailComponent } from './components/game-detail/game-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TeamComponent,
     EventComponent,
-    FooterComponent
+    FooterComponent,
+    GameComponent,
+    GameDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +33,8 @@ import { FooterComponent } from './components/footer/footer.component';
   ],
   providers: [
     TeamService,
-    EventService
+    EventService,
+    GameService
   ],
   bootstrap: [AppComponent]
 })
