@@ -16,6 +16,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { GameComponent } from './components/game/game.component';
 import { GameService } from './services/game.service';
 import { GameDetailComponent } from './components/game-detail/game-detail.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { GameDetailComponent } from './components/game-detail/game-detail.compon
     EventComponent,
     FooterComponent,
     GameComponent,
-    GameDetailComponent
+    GameDetailComponent,
+    NavbarComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+
+  <a class="navbar-brand" routerLink="/">
+    <img class="d-inline-block align-top" src="http://freevector.co/wp-content/uploads/2013/08/26356-football-ball.png" width="30"
+      height="30" alt=""> MEAN Sports
+  </a>
+
+  <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarItems" aria-controls="navbarItems"
+    aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="navbar-collapse collapse" id="navbarItems">
+
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link" routerLink="/">Inicio</a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link" routerLink="/teams">Equipos&nbsp;&nbsp;
+          <i class="fa fa-users fa-flip-horizontal" aria-hidden="true"></i>
+        </a>
+      </li>
+      <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <a class="nav-link" routerLink="/games">Partidos&nbsp;&nbsp;
+          <i class="fa fa-futbol-o fa-flip-horizontal" aria-hidden="true"></i>
+        </a>
+      </li>
+    </ul>
+
+  </div>
+
+</nav>

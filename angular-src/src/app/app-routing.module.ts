@@ -5,11 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { TeamComponent } from './components/team/team.component';
 import { GameDetailComponent } from './components/game-detail/game-detail.component';
 import { GameComponent } from './components/game/game.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: GameComponent
+    component: HomeComponent
   },
   {
     path: 'game/:id',
@@ -17,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    component: GameComponent
+    component: HomeComponent
   }
 ];
 
