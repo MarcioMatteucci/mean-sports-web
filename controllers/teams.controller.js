@@ -77,7 +77,7 @@ module.exports = {
     }
 
     // Datos del body
-    const name = await req.body.name;
+    const { name, imageUrl } = await req.body;
 
     // Validar que el team no exista
     const sameNameTeam = await Team.findOne({ name: name });
@@ -87,7 +87,8 @@ module.exports = {
 
     // Crear nuevo Team con los datos del body
     const newTeam = new Team({
-      name: name
+      name: name,
+      imageUrl: imageUrl
     });
 
     // Persistencia del nuevo Team

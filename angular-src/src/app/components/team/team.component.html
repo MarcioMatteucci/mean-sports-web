@@ -1,34 +1,48 @@
-<h1 class="display-4" *ngIf="isSuccess && teams.length > 0">Equipos</h1>
+<h1 class="display-4">Equipos</h1>
+
+<div *ngIf="teamCreated">
+  {{ successMessage }}
+</div>
+
 
 <hr>
 
-<ng-template [ngIf]="teamFormAvailable">
+<div *ngIf="teamFormAvailable">
   <h2>Nuevo equipo</h2>
 
-  <form [formGroup]="teamForm">
-    <div class="form-group">
-      <div class="form-row">
-        <div class="col">
+  <form [formGroup]="teamForm" novalidate>
+
+    <div class="form-row">
+      <div class="col">
+
+        <div class="form-group">
           <label for="name">Equipo:</label>
-          <input [ngClass]="{'is-invalid': (name.errors && name.dirty) || (!isValidTeamName && name.dirty) && !name.focus, 'is-valid': !name.errors && isValidTeamName }"
-            type="text" name="username" class="form-control" autocomplete="off" placeholder="Ingrese Nombre del Equipo" formControlName="name"
-            (keyup)="checkTeamName()" />
-          <div class="invalid-feedback" *ngIf="(name.errors && (name.dirty || name.touched))">
-            <p *ngIf="name.errors?.required">El campo es requerido.</p>
-            <p *ngIf="name.errors?.minlength || name.errors?.maxlength && name.dirty ">El campo debe tener entre 3 y 50 caracteres.</p>
+          <input [ngClass]="{'is-invalid': teamForm.get('name').invalid && (teamForm.get('name').dirty || teamForm.get('name').touched), 'is-valid': teamForm.get('name').valid && (teamForm.get('name').dirty || teamForm.get('name').touched)}"
+            type="text" name="name" class="form-control" autocomplete="off" placeholder="Ingrese Nombre del Equipo" formControlName="name"
+          />
+
+          <div class="invalid-feedback" *ngIf="teamForm.get('name').invalid && (teamForm.get('name').dirty || teamForm.get('name').touched)">
+            <p *ngIf="teamForm.get('name').hasError('required')">El campo es requerido.</p>
+            <p *ngIf="teamForm.get('name').hasError('minlength') || teamForm.get('name').hasError('maxlength')">El campo debe tener entre 3 y 50 caracteres.</p>
           </div>
-          <p class="invalid-feedback" *ngIf="!isValidTeamName && !name.errors?.required">Este Equipo ya existe.</p>
         </div>
-        <div class="col">
+
+      </div>
+
+      <div class="col">
+
+        <div class="form-group">
           <label for="name">Escudo (opcional):</label>
           <input type="text" name="username" class="form-control" autocomplete="off" placeholder="Ingrese URL de imagen del Escudo"
             formControlName="imageUrl" />
         </div>
+
       </div>
+
     </div>
 
     <div class="row">
-      <button [disabled]="!teamForm.valid" type="button" class="btn btn-success btn-fixed ml-3">
+      <button [disabled]="teamForm.invalid" type="button" class="btn btn-success btn-fixed ml-3" (click)="onTeamSubmit()">
         <i class="fa fa-check" aria-hidden="true"></i>&nbsp;&nbsp;Agregar
       </button>
       <button type="button" class="btn btn-primary btn-fixed ml-3" (click)="cleanForm()">
@@ -38,14 +52,25 @@
         <i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar
       </button>
     </div>
+
   </form>
+
+
+  <div>
+    {{ teamForm.get('name').value | json }}
+  </div>
+  <div>
+    {{ teamForm.value | json }}
+  </div>
   <hr>
-</ng-template>
+</div>
 
 <div *ngIf="!teamFormAvailable">
   <input type="button" class="btn btn-success btn-lg" value="Agregar Equipo" (click)="toggleTeamForm()">
 </div>
 
-<div *ngFor="let team of teams">
-  {{ team.name }}
+<div *ngIf="isSuccess">
+  <div *ngFor="let team of teams">
+    {{ team | json }}
+  </div>
 </div>

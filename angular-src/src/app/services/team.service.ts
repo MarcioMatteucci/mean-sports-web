@@ -18,5 +18,8 @@ export class TeamService {
     return this.http.get('http://localhost:3000/api/teams?name=' + name);
   }
 
+  createTeam(team: any) {
+    return this.http.post('http://localhost:3000/api/teams', team);
+  }
 
 }

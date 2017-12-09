@@ -8,6 +8,11 @@ const teamSchema = new Schema({
       type: String,
       required: true,
       unique: true
+   },
+   imageUrl: {
+      type: String,
+      required: false,
+      default: 'https://image.flaticon.com/icons/png/512/36/36601.png'
    }
 }, { timestamps: true });
 
