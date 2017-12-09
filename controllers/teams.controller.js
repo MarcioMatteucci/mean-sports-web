@@ -7,14 +7,34 @@ module.exports = {
     Get All Teams
   ============== */
   getAllTeams: async (req, res, next) => {
-    // Todos los datos de la coleccion
-    await Team.find((err, teams) => {
-      if (err) {
-        return res.status(500).json({ success: false, msg: err });
-      }
 
-      res.status(200).json({ success: true, teams: teams });
-    });
+    const name = await req.query.name;
+    console.log(name);
+
+    if (name) {
+      // Buscar team
+      await Team.findOne({ name: name }, (err, team) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        if (!team) {
+          return res.status(200).json({ success: false, msg: 'No se ha encontrado Equipo con ese Nombre' });
+        }
+
+        res.status(200).json({ success: true, team: team });
+      });
+
+    } else {
+      // Todos los datos de la coleccion
+      await Team.find((err, teams) => {
+        if (err) {
+          return res.status(500).json({ success: false, msg: err });
+        }
+
+        res.status(200).json({ success: true, teams: teams });
+      });
+    }
   },
 
   /* ================

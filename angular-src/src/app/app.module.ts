@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -18,6 +19,7 @@ import { GameService } from './services/game.service';
 import { GameDetailComponent } from './components/game-detail/game-detail.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomeComponent } from './components/home/home.component';
+import { AddTeamComponent } from './components/add-team/add-team.component';
 
 @NgModule({
   declarations: [
@@ -28,12 +30,15 @@ import { HomeComponent } from './components/home/home.component';
     GameComponent,
     GameDetailComponent,
     NavbarComponent,
-    HomeComponent
+    HomeComponent,
+    AddTeamComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [
     TeamService,
