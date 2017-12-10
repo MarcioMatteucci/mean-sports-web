@@ -9,7 +9,6 @@ module.exports = {
   getAllTeams: async (req, res, next) => {
 
     const name = await req.query.name;
-    console.log(name);
 
     if (name) {
       // Buscar team
@@ -82,7 +81,7 @@ module.exports = {
     // Validar que el team no exista
     const sameNameTeam = await Team.findOne({ name: name });
     if (sameNameTeam) {
-      return res.status(403).json({ success: false, msg: 'El Equipo ya existe' });
+      return res.status(200).json({ success: false, msg: 'El Equipo ya existe' });
     }
 
     // Crear nuevo Team con los datos del body

@@ -22,4 +22,8 @@ export class TeamService {
     return this.http.post('http://localhost:3000/api/teams', team);
   }
 
+  deleteTeam(id: string) {
+    return this.http.delete('http://localhost:3000/api/teams/' + id);
+  }
+
 }

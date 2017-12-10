@@ -174,7 +174,6 @@ module.exports = {
       }
 
       if (!game.start.isStarted) {
-        console.log('no iniciado')
         return res.status(400).json({ success: false, msg: 'El Partido no se ha iniciado' });
       }
 
@@ -248,12 +247,10 @@ module.exports = {
       }
 
       if (!game.start.isStarted) {
-        console.log('no iniciado');
         return res.status(400).json({ success: false, msg: 'El Partido no se ha iniciado' });
       }
 
       if (game.finish.isFinished) {
-        console.log('finalizado');
         return res.status(400).json({ success: false, msg: 'El Partido se ha finalizado' });
       }
 
@@ -340,10 +337,10 @@ module.exports = {
 
   },
 
-   /* ===========
-  Delete event by id
- ============ */
- deleteEvent: async (req, res, next) => {
+  /* ===========
+ Delete event by id
+============ */
+  deleteEvent: async (req, res, next) => {
     // Validar si hay errores en el Id que se pasa por parametro
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -355,9 +352,9 @@ module.exports = {
     const idEvent = await req.params.idEvent;
 
     //Elimina del array de eventos del game y despues de la coleccion de eventos
-    await Game.findById(id,(err, game) => {
+    await Game.findById(id, (err, game) => {
       if (err) {
-        return res.status(500).json({ success: false, msg: err });  
+        return res.status(500).json({ success: false, msg: err });
       }
       if (!game) {
         return res.status(404).json({ success: false, msg: 'No se ha encontrado Partido con ese ID' });

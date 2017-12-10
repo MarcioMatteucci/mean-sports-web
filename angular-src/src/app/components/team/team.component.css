@@ -1,3 +1,13 @@
 .btn-fixed {
    width: 130px;
 }
+
+.btn-delete {
+   width: 130px;
+}
+
+.card-img-top {
+   height: auto; 
+   width: auto;
+   max-height: 140px;
+}

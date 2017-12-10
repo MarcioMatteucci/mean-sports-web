@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { TeamService } from './../../services/team.service';
 import { ITeam } from '../../models/team';
-import { AbstractControl } from '@angular/forms/src/model';
 
 @Component({
   selector: 'app-team',
@@ -16,9 +14,10 @@ export class TeamComponent implements OnInit {
   teams: ITeam[] = [];
   isSuccess = false;
   teamFormAvailable = false;
-  teamCreated = false;
-  successMessage = '';
-  errorMessage = '';
+  messageClass: String;
+  showMessage = false;
+  onSubmitMessage: String;
+  processing = false;
 
   teamForm: FormGroup;
 
@@ -44,6 +43,16 @@ export class TeamComponent implements OnInit {
     });
   }
 
+  disableForm() {
+    this.teamForm.controls['name'].disable();
+    this.teamForm.controls['imageUrl'].disable();
+  }
+
+  enableForm() {
+    this.teamForm.controls['name'].enable();
+    this.teamForm.controls['imageUrl'].enable();
+  }
+
   cleanForm() {
     this.teamForm.reset();
   }
@@ -54,6 +63,16 @@ export class TeamComponent implements OnInit {
   }
 
   onTeamSubmit() {
+    this.disableForm();
+    this.processing = true;
+
+    if (!this.teamForm.get('imageUrl').value) {
+      this.teamForm.setValue({
+        name: this.teamForm.get('name').value,
+        imageUrl: 'https://image.flaticon.com/icons/png/512/36/36601.png'
+      });
+    }
+
     const team = {
       name: this.teamForm.get('name').value,
       imageUrl: this.teamForm.get('imageUrl').value
@@ -62,21 +81,47 @@ export class TeamComponent implements OnInit {
     this.teamService.createTeam(team)
       .subscribe((data: any) => {
         if (data.success) {
-          this.teamCreated = true;
-          this.successMessage = data.msg;
-        } else if (!data.success) {
-          this.teamCreated = false;
-          this.errorMessage = data.msg;
+          this.messageClass = 'alert alert-success';
+          this.showMessage = true;
+          this.onSubmitMessage = data.msg;
+          this.getTeams();
+          setTimeout(() => {
+            this.showMessage = false;
+            this.cleanForm();
+            this.enableForm();
+            this.processing = false;
+          }, 1500);
+        }
+        if (!data.success) {
+          this.messageClass = 'alert alert-danger';
+          this.showMessage = true;
+          this.onSubmitMessage = data.msg;
+          setTimeout(() => {
+            this.showMessage = false;
+            this.cleanForm();
+            this.enableForm();
+            this.processing = false;
+          }, 1500);
         }
       });
   }
 
-  ngOnInit() {
+  onTeamDelete(id) {
+    this.teamService.deleteTeam(id)
+      .subscribe(() => {
+        this.getTeams();
+      });
+  }
+
+  getTeams() {
     this.teamService.getAllTeams()
       .subscribe((data: any) => {
-        this.isSuccess = data.success;
         this.teams = data.teams;
       });
+  }
+
+  ngOnInit() {
+    this.getTeams();
   }
 
 }

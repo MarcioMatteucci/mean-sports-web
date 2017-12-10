@@ -1,14 +1,18 @@
-<h1 class="display-4">Equipos</h1>
+<h1 class="display-4">
+  Equipos</h1>
 
-<div *ngIf="teamCreated">
-  {{ successMessage }}
-</div>
-
+<button *ngIf="!teamFormAvailable" class="btn btn-success btn-lg" (click)="toggleTeamForm()">
+  <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Agregar Equipo
+</button>
 
 <hr>
 
 <div *ngIf="teamFormAvailable">
   <h2>Nuevo equipo</h2>
+
+  <div *ngIf="showMessage" [ngClass]="messageClass">
+    <strong>{{ onSubmitMessage }}</strong>
+  </div>
 
   <form [formGroup]="teamForm" novalidate>
 
@@ -42,35 +46,36 @@
     </div>
 
     <div class="row">
-      <button [disabled]="teamForm.invalid" type="button" class="btn btn-success btn-fixed ml-3" (click)="onTeamSubmit()">
+      <button [disabled]="teamForm.invalid || processing" type="button" class="btn btn-success btn-fixed ml-3" (click)="onTeamSubmit()">
         <i class="fa fa-check" aria-hidden="true"></i>&nbsp;&nbsp;Agregar
       </button>
-      <button type="button" class="btn btn-primary btn-fixed ml-3" (click)="cleanForm()">
+      <button [disabled]="processing" type="button" class="btn btn-primary btn-fixed ml-3" (click)="cleanForm()">
         <i class="fa fa-recycle" aria-hidden="true"></i>&nbsp;&nbsp;Limpiar
       </button>
-      <button type="button" class="btn btn-danger btn-fixed ml-5" value="Cerrar" (click)="toggleTeamForm()">
+      <button [disabled]="processing" type="button" class="btn btn-danger btn-fixed ml-5" value="Cerrar" (click)="toggleTeamForm()">
         <i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar
       </button>
     </div>
 
   </form>
 
-
-  <div>
-    {{ teamForm.get('name').value | json }}
-  </div>
-  <div>
-    {{ teamForm.value | json }}
-  </div>
   <hr>
 </div>
 
-<div *ngIf="!teamFormAvailable">
-  <input type="button" class="btn btn-success btn-lg" value="Agregar Equipo" (click)="toggleTeamForm()">
-</div>
-
-<div *ngIf="isSuccess">
-  <div *ngFor="let team of teams">
-    {{ team | json }}
+<div *ngIf="teams?.length > 0">
+  <div class="row">
+    <div *ngFor="let team of teams" class="col-sm-12 col-md-4 col-lg-3 col-xl-3">
+      <div class="card mt-3">
+        <div class="card-text text-center h3">
+          <strong>{{ team.name }}</strong>
+        </div>
+        <img class="card-img-top mx-auto my-auto" src="{{ team.imageUrl }}">
+        <div class="card-body text-center">
+          <button class="btn btn-primary btn-delete" (click)="onTeamDelete(team._id)">
+            <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
