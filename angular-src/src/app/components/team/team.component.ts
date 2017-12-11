@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { TeamService } from './../../services/team.service';
-import { ITeam } from '../../models/team';
+import { ITeam } from '../../models/team.model';
 
 @Component({
   selector: 'app-team',

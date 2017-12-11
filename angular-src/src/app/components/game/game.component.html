@@ -1,12 +1,53 @@
-<div *ngIf="result?.games.length > 0">
-  <h1 class="text-center">Partidos activos</h1>
-  <div *ngFor="let game of result.games">
-    <div *ngIf="!game.finish.isFinished && game.start.isStarted" class="card mb-1">      
-      <div class="card-body text-center">       
-        <h2 class="card-text my-1"><a routerLink="/game/{{game._id}}" routerLinkActive="active"> {{ game.visitingTeam.name}} vs {{game.localTeam.name}}</a></h2>
-        <h2 class="card-text my-1">  {{ game.visitingTeam.goals}} a {{game.localTeam.goals}}</h2>
-        <p *ngIf="game.start.isStarted" class="card-text my-1"><strong>Fecha y hora de inicio: </strong> {{ game.start.startedAt | date:'dd/MM/yyyy h:mm a' }} </p>        
+<h1 class="display-4">Partidos</h1>
+
+<button *ngIf="!gameFormAvailable" class="btn btn-success btn-lg" (click)="toggleGameForm()">
+  <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Agregar Partido
+</button>
+
+<hr>
+
+<div *ngIf="gameFormAvailable">
+  <h2>Nuevo partido</h2>
+
+  <div class="row">
+    <form [formGroup]="gameForm" novalidate>
+
+      <div class="form-row">
+        <select class="custom-select ml-4" formControlName="localTeamName">
+          <option selected value=''>Elija equipo local ...</option>
+          <option *ngFor="let team of localTeams" [value]="team">{{ team }}</option>
+        </select>
+        <span>
+          <p class="h3">
+            <strong>&nbsp;&nbsp;VS&nbsp;&nbsp;</strong>
+          </p>
+        </span>
+        <select class="custom-select" formControlName="visitingTeamName">
+          <option selected value=''>Elija equipo visitante ...</option>
+          <option *ngFor="let team of visitingTeams" [value]="team">{{ team }}</option>
+        </select>
       </div>
-    </div>
+    </form>
+
+    <button [disabled]="gameForm.invalid || processing" type="button" class="btn btn-success ml-5" (click)="onGameSubmit()">
+      <i class="fa fa-check" aria-hidden="true"></i>&nbsp;&nbsp;Agregar
+    </button>
+    <button [disabled]="processing" type="button" class="btn btn-danger btn-fixed ml-2" value="Cerrar" (click)="toggleGameForm()">
+      <i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar
+    </button>
   </div>
+
+  <div>
+    {{ this.gameForm.get('localTeamName').hasError('required') }} {{ this.gameForm.get('visitingTeamName').hasError('required')
+    }}
+  </div>
+
+  <hr>
+
+</div>
+
+
+
+<div *ngFor="let game of games">
+  {{ game.localTeam.name }} vs {{ game.visitingTeam.name }}
 </div>

@@ -17,6 +17,10 @@ const routes: Routes = [
     component: TeamComponent
   },
   {
+    path: 'games',
+    component: GameComponent
+  },
+  {
     path: 'games/:id',
     component: GameDetailComponent
   },

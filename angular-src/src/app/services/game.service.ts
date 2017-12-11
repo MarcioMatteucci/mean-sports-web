@@ -1,6 +1,10 @@
+import { Observable } from 'rxjs/Observable';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
+
+
+import { IGame } from '../models/game.model';
 
 @Injectable()
 export class GameService {
@@ -9,8 +13,8 @@ export class GameService {
     private http: HttpClient
   ) { }
 
-  getAllGames() {
-    return this.http.get('http://localhost:3000/api/games');
+  getAllGames(): Observable<IGame[]> {
+    return this.http.get<IGame[]>('http://localhost:3000/api/games');
   }
 
   getGameById(gameId: string) {
