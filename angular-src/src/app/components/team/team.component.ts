@@ -12,7 +12,6 @@ import { ITeam } from '../../models/team';
 export class TeamComponent implements OnInit {
 
   teams: ITeam[] = [];
-  isSuccess = false;
   teamFormAvailable = false;
   messageClass: String;
   showMessage = false;
@@ -92,10 +91,12 @@ export class TeamComponent implements OnInit {
             this.processing = false;
           }, 1500);
         }
-        if (!data.success) {
+      },
+      (err: any) => {
+        if (err.status === 403) {
           this.messageClass = 'alert alert-danger';
           this.showMessage = true;
-          this.onSubmitMessage = data.msg;
+          this.onSubmitMessage = err.error.msg;
           setTimeout(() => {
             this.showMessage = false;
             this.cleanForm();
@@ -108,7 +109,10 @@ export class TeamComponent implements OnInit {
 
   onTeamDelete(id) {
     this.teamService.deleteTeam(id)
-      .subscribe(() => {
+      .subscribe((data: any) => {
+        this.getTeams();
+      },
+      (err: any) => {
         this.getTeams();
       });
   }
