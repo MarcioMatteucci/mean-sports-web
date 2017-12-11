@@ -13,13 +13,18 @@ import { ITeam } from '../../models/team.model';
 })
 export class GameComponent implements OnInit {
 
-  games: IGame[] = [];
+  pendingGames: IGame[] = [];
+  startedGames: IGame[] = [];
+  finishedGames: IGame[] = [];
   gameFormAvailable = false;
   localTeams: string[] = [];
   visitingTeams: string[] = [];
   selectedLocalTeam: ITeam;
   selectedVisitingTeam: ITeam;
   processing = false;
+  showMessage: boolean;
+  messageClass: string;
+  onSubmitMessage: string;
 
   gameForm: FormGroup;
 
@@ -43,19 +48,104 @@ export class GameComponent implements OnInit {
     });
   }
 
+  disableForm() {
+    this.gameForm.controls['localTeamName'].disable();
+    this.gameForm.controls['visitingTeamName'].disable();
+  }
+
+  enableForm() {
+    this.gameForm.controls['localTeamName'].enable();
+    this.gameForm.controls['visitingTeamName'].enable();
+  }
+
+  cleanForm() {
+    this.gameForm.get('localTeamName').setValue('');
+    this.gameForm.get('visitingTeamName').setValue('');
+  }
+
   toggleGameForm() {
     this.gameFormAvailable = !this.gameFormAvailable;
+    this.cleanForm();
   }
 
   onGameSubmit() {
+    this.disableForm();
+    this.processing = true;
+
+    if (this.gameForm.get('localTeamName').value === this.gameForm.get('visitingTeamName').value) {
+      this.messageClass = 'alert alert-danger';
+      this.showMessage = true;
+      this.onSubmitMessage = 'Debes elegir equipos distintos';
+      setTimeout(() => {
+        this.showMessage = false;
+        this.cleanForm();
+        this.enableForm();
+        this.processing = false;
+        return;
+      }, 1500);
+    } else {
+      const game = {
+        localTeamName: this.gameForm.get('localTeamName').value,
+        visitingTeamName: this.gameForm.get('visitingTeamName').value
+      };
+
+      this.gameService.createGame(game)
+        .subscribe((data: any) => {
+          if (data.success) {
+            this.messageClass = 'alert alert-success';
+            this.showMessage = true;
+            this.onSubmitMessage = data.msg;
+            this.getPendingGames();
+            setTimeout(() => {
+              this.showMessage = false;
+              this.cleanForm();
+              this.enableForm();
+              this.processing = false;
+            }, 1500);
+          }
+        },
+        (err: any) => {
+          this.messageClass = 'alert alert-danger';
+          this.showMessage = true;
+          this.onSubmitMessage = err.error.msg;
+          setTimeout(() => {
+            this.showMessage = false;
+            this.cleanForm();
+            this.enableForm();
+            this.processing = false;
+          }, 1500);
+        });
+    }
 
   }
 
-  getGames() {
-    this.gameService.getAllGames()
+  onGameDelete(id) {
+    this.gameService.deleteGame(id)
+      .subscribe((data: any) => {
+        this.getAllGames();
+      },
+      (err: any) => {
+        this.getAllGames();
+      });
+
+  }
+
+  onInitGame(id) {
+    this.gameService.initGame(id)
+      .subscribe((data: any) => {
+        this.getAllGames();
+      },
+      (err: any) => {
+        this.getAllGames();
+      });
+
+  }
+
+  getPendingGames() {
+    this.gameService.getGames('pending')
       .subscribe((data: any) => {
         if (data.success) {
-          this.games = data.games;
+          this.pendingGames = data.games;
         }
       },
       (err: any) => {
@@ -63,6 +153,40 @@ export class GameComponent implements OnInit {
           console.log(err.error.msg);
         }
       });
+  }
+
+  getStartedGames() {
+    this.gameService.getGames('inProgress')
+      .subscribe((data: any) => {
+        if (data.success) {
+          this.startedGames = data.games;
+        }
+      },
+      (err: any) => {
+        if (!err.error.success) {
+          console.log(err.error.msg);
+        }
+      });
+  }
+
+  getFinishedGames() {
+    this.gameService.getGames('finished')
+      .subscribe((data: any) => {
+        if (data.success) {
+          this.finishedGames = data.games;
+        }
+      },
+      (err: any) => {
+        if (!err.error.success) {
+          console.log(err.error.msg);
+        }
+      });
+  }
+
+  getAllGames() {
+    this.getPendingGames();
+    this.getStartedGames();
+    this.getFinishedGames();
   }
 
   getTeamNames() {
@@ -84,12 +208,16 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getGames();
+    this.getAllGames();
     this.getTeamNames();
 
     setTimeout(() => {
       console.log(this.localTeams);
       console.log(this.visitingTeams);
+      console.log(this.pendingGames);
+      console.log(this.startedGames);
+      console.log(this.finishedGames);
+
     }, 2000);
   }
 

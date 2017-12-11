@@ -2,10 +2,12 @@ export interface IGame {
    _id: string;
    localTeam: {
       name: string;
+      goals: number;
       events: string[];
    };
    visitingTeam: {
       name: string;
+      goals: number;
       events: string[];
    };
    start: {

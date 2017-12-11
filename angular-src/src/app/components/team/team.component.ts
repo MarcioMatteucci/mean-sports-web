@@ -13,9 +13,9 @@ export class TeamComponent implements OnInit {
 
   teams: ITeam[] = [];
   teamFormAvailable = false;
-  messageClass: String;
+  messageClass: string;
   showMessage = false;
-  onSubmitMessage: String;
+  onSubmitMessage: string;
   processing = false;
 
   teamForm: FormGroup;
