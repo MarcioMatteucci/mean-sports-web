@@ -210,15 +210,6 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.getAllGames();
     this.getTeamNames();
-
-    setTimeout(() => {
-      console.log(this.localTeams);
-      console.log(this.visitingTeams);
-      console.log(this.pendingGames);
-      console.log(this.startedGames);
-      console.log(this.finishedGames);
-
-    }, 2000);
   }
 
 }
