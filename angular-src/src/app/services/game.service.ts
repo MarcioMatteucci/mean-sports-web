@@ -33,9 +33,18 @@ export class GameService {
     return this.http.post('http://localhost:3000/api/games/' + id + '/start', null);
   }
 
+  finishGame(id: string): any {
+    return this.http.post('http://localhost:3000/api/games/' + id + '/finish', null);
+  }
+
   // :id/events
   getEventsByGame(id: string): any {
     return this.http.get('http://localhost:3000/api/games/' + id + '/events');
+  }
+
+  // /:id/events/:idEvent
+  deleteEvent(gameId: string, eventId: string) {
+    return this.http.delete('http://localhost:3000/api/games/' + gameId + '/events/' + eventId);
   }
 
 }

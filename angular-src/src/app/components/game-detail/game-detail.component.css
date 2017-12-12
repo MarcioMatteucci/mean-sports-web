@@ -1,0 +1,90 @@
+.wrapper-game {
+   display: grid;
+   grid-template-columns: repeat(13, 1fr);
+   grid-auto-rows: auto;
+   grid-template-areas: 
+   "local localname localname localname localname localgoals versus visitinggoals visitingname visitingname visitingname visitingname visiting";
+   
+}
+
+.local-team {
+   grid-area: local;
+   background-color: #202020;
+   color: white;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;
+}
+
+.local-team-name {
+   grid-area: localname;   
+   background-color: #555555;
+   color: white;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;
+}
+
+.local-team-goals {
+   grid-area: localgoals;
+   background-color: #202020;
+   color: white;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;
+}
+
+.versus {
+   grid-area: versus;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;   
+   border-color: white;
+}
+
+.visiting-team-goals {
+   grid-area: visitinggoals;
+   background-color: #202020;
+   color: white;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;
+}
+
+.visiting-team-name {
+   grid-area: visitingname;   
+   background-color: #555555;
+   color: white;
+   border-top: 2px solid;
+   border-left: 2px solid;
+   border-bottom: 2px solid;
+}
+
+.visiting-team {
+   grid-area: visiting;
+   background-color: #202020;
+   color: white;
+   border: 2px solid;
+}
+
+
+.wrapper-events {
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   grid-auto-rows: auto;
+   grid-template-areas: "localevents visitingevents";
+
+}
+
+.local-events {
+   grid-area: localevents;
+}
+
+.visiting-events {
+   grid-area: visitingevents;
+}
+
+.center {
+   text-align: center;
+   margin-top: 10px
+}

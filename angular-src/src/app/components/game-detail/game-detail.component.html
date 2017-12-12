@@ -1,3 +1,83 @@
-<div>
-  {{ game | json }}
+<div class="row">
+  <p class="ml-3">Fecha de Inicio: {{ game?.start.startedAt | date: 'dd/MM/yyyy' }}</p>
+  <p class="ml-5">Hora de Inicio: {{ game?.start.startedAt | date: 'HH:mm' }} hs.</p>
+</div>
+
+
+<div class="wrapper-game mb-3">
+  <div class="local-team">
+    <p class="h5 center">Local</p>
+  </div>
+  <div class="local-team-name">
+    <p class="h4 center">{{game?.localTeam.name}}</p>
+  </div>
+  <div class="local-team-goals">
+    <p class="h4 center">{{game?.localTeam.goals}}</p>
+  </div>
+  <div class="versus">
+    <p class="h4 center">VS.</p>
+  </div>
+  <div class="visiting-team-goals">
+    <p class="h4 center">{{game?.visitingTeam.goals}}</p>
+  </div>
+  <div class="visiting-team-name">
+    <p class="h4 center">{{game?.visitingTeam.name}}</p>
+  </div>
+  <div class="visiting-team">
+    <p class="h5 mx-2 center">Visitante</p>
+  </div>
+</div>
+
+<div class="wrapper-events">
+  <div *ngIf="localEvents.length > 0" class="local-events">
+    <ul *ngFor="let event of localEvents" class="list-group mr-4">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          <span *ngIf="event.type === 'Sustitución'">
+            <i class="fa fa-arrow-up" aria-hidden="true" style="color: green;"></i>
+          </span>
+          <strong>{{ event.player1 }}</strong>
+        </span>
+        <span *ngIf="event.type === 'Sustitución'">
+          <span>
+            <i class="fa fa-arrow-down" aria-hidden="true" style="color: red;"></i>
+          </span>
+          <strong>{{ event.player2 }}</strong>
+        </span>
+        <span *ngIf="event.isOwnGoal">(en Contra).</span>
+        <span (click)="onEventDelete(event._id)" class="badge badge-pill" [ngClass]="{ 'badge-success': event.type === 'Gol', 'badge-warning': event.type === 'Amonestación', 'badge-danger': event.type === 'Expulsión', 'badge-info': event.type === 'Sustitución' }">{{ event.type }}
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </span>
+      </li>
+    </ul>
+  </div>
+  <div *ngIf="visitingEvents.length > 0" class="visiting-events">
+    <ul *ngFor="let event of visitingEvents" class="list-group mr-4">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          <span *ngIf="event.type === 'Sustitución'">
+            <i class="fa fa-arrow-up" aria-hidden="true" style="color: green;"></i>
+          </span>
+          <strong>{{ event.player1 }}</strong>
+        </span>
+        <span *ngIf="event.type === 'Sustitución'">
+          <span>
+            <i class="fa fa-arrow-down" aria-hidden="true" style="color: red;"></i>
+          </span>
+          <strong>{{ event.player2 }}</strong>
+        </span>
+        <span *ngIf="event.isOwnGoal">(en Contra)</span>
+        <span (click)="onEventDelete(event._id)" class="badge badge-pill" [ngClass]="{ 'badge-success': event.type === 'Gol', 'badge-warning': event.type === 'Amonestación', 'badge-danger': event.type === 'Expulsión', 'badge-info': event.type === 'Sustitución' }">{{ event.type }}
+          <i class="fa fa-times" aria-hidden="true"></i>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="actions">
+  <div class="row ml-3 center">
+    <button class="btn btn-primary btn-sm" (click)="onFinishGame()">Finalizar</button>
+  </div>
 </div>

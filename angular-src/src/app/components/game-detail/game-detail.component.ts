@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import { GameService } from './../../services/game.service';
 import { IGame } from './../../models/game.model';
+import { IEvent } from './../../models/event.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-detail',
@@ -13,12 +15,13 @@ export class GameDetailComponent implements OnInit {
 
   id: string;
   game: IGame;
-  localEvents: any;
-  visitingEvents: any;
+  localEvents: IEvent[] = [];
+  visitingEvents: IEvent[] = [];
 
   constructor(
     private route: ActivatedRoute,
-    private gameService: GameService
+    private gameService: GameService,
+    private router: Router
   ) { }
 
   getIdGame() {
@@ -30,7 +33,7 @@ export class GameDetailComponent implements OnInit {
   getGame() {
     this.gameService.getGameById(this.id)
       .subscribe((data: any) => {
-        this.game = data;
+        this.game = data.game;
         console.log(this.game);
       }, (err: any) => {
         if (err.status === 404) {
@@ -38,7 +41,6 @@ export class GameDetailComponent implements OnInit {
         }
       }
       );
-
   }
 
   getEvents() {
@@ -54,7 +56,26 @@ export class GameDetailComponent implements OnInit {
       (err: any) => {
         console.log(err.error.msg);
       });
+  }
 
+  onFinishGame() {
+    this.gameService.finishGame(this.id)
+      .subscribe((data: any) => {
+        this.router.navigate(['/games']);
+      },
+      (err: any) => {
+        console.log(err.error.msg);
+      });
+  }
+
+  onEventDelete(eventId) {
+    this.gameService.deleteEvent(this.id, eventId)
+      .subscribe((data: any) => {
+        this.getEvents();
+      },
+      (err: any) => {
+        console.log(err);
+      });
   }
 
   ngOnInit() {
