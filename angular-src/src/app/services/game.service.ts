@@ -17,8 +17,8 @@ export class GameService {
     return this.http.get<IGame[]>('http://localhost:3000/api/games?c=' + query);
   }
 
-  getGameById(gameId: string) {
-    return this.http.get('http://localhost:3000/api/games/' + gameId);
+  getGameById(id: string) {
+    return this.http.get('http://localhost:3000/api/games/' + id);
   }
 
   createGame(game: any): Observable<IGame> {
@@ -31,6 +31,11 @@ export class GameService {
 
   initGame(id: string): any {
     return this.http.post('http://localhost:3000/api/games/' + id + '/start', null);
+  }
+
+  // :id/events
+  getEventsByGame(id: string): any {
+    return this.http.get('http://localhost:3000/api/games/' + id + '/events');
   }
 
 }

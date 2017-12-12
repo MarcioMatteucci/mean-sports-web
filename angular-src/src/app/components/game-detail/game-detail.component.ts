@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { GameService } from './../../services/game.service';
+import { IGame } from './../../models/game.model';
 
 @Component({
   selector: 'app-game-detail',
@@ -10,35 +11,56 @@ import { GameService } from './../../services/game.service';
 })
 export class GameDetailComponent implements OnInit {
 
-  gameId;
-  result: any;
-  isLoading = true;
-  isStarted: boolean;
+  id: string;
+  game: IGame;
+  localEvents: any;
+  visitingEvents: any;
 
   constructor(
     private route: ActivatedRoute,
     private gameService: GameService
   ) { }
 
-  ngOnInit() {
-
+  getIdGame() {
     this.route.params.subscribe(params => {
-      this.gameId = params['id'];
-      console.log(this.gameId);
+      this.id = params['id'];
     });
+  }
 
-    this.gameService.getGameById(this.gameId)
-      .subscribe(data => {
-        this.result = data;
-        console.log(this.result);
+  getGame() {
+    this.gameService.getGameById(this.id)
+      .subscribe((data: any) => {
+        this.game = data;
+        console.log(this.game);
       }, (err: any) => {
         if (err.status === 404) {
           console.log('No se encontro game con ese ID');
-
         }
+      }
+      );
+
+  }
+
+  getEvents() {
+    this.gameService.getEventsByGame(this.id)
+      .subscribe((data: any) => {
+        if (data.success) {
+          this.localEvents = data.localEvents;
+          this.visitingEvents = data.visitingEvents;
+          console.log(this.localEvents);
+          console.log(this.visitingEvents);
+        }
+      },
+      (err: any) => {
+        console.log(err.error.msg);
       });
 
-    this.isLoading = false;
+  }
+
+  ngOnInit() {
+    this.getIdGame();
+    this.getGame();
+    this.getEvents();
   }
 
 }
