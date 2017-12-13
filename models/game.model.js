@@ -57,7 +57,12 @@ gameSchema.pre('findOne', autoPopulateEvents).pre('find', autoPopulateEvents);
 gameSchema.virtual('localTeam.goals').get(function () {
     let goals = 0;
     this.localTeam.events.forEach(event => {
-        if (event.type === 'Gol') {
+        if (event.type === 'Gol' && !event.isOwnGoal) {
+            goals++;
+        }
+    });
+    this.visitingTeam.events.forEach(event => {
+        if (event.type === 'Gol' && event.isOwnGoal) {
             goals++;
         }
     });
@@ -67,7 +72,12 @@ gameSchema.virtual('localTeam.goals').get(function () {
 gameSchema.virtual('visitingTeam.goals').get(function () {
     let goals = 0;
     this.visitingTeam.events.forEach(event => {
-        if (event.type === 'Gol') {
+        if (event.type === 'Gol' && !event.isOwnGoal) {
+            goals++;
+        }
+    });
+    this.localTeam.events.forEach(event => {
+        if (event.type === 'Gol' && event.isOwnGoal) {
             goals++;
         }
     });
