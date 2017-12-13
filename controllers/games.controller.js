@@ -213,6 +213,17 @@ module.exports = {
         return res.status(404).json({ success: false, msg: 'No se ha encontrado un partido con ese ID' });
       }
 
+      //Elimina todos los eventos del partido de la colección de eventos
+      //Ignoro errores o inexistencia de los eventos porque el partido es eliminado de todos modos
+      game.localTeam.events.forEach(eventId => {
+        Event.findByIdAndRemove(eventId, (err, event) => {
+        });
+      });
+      game.visitingTeam.events.forEach(eventId => {
+        Event.findByIdAndRemove(eventId, (err, event) => {
+        });
+      });
+
       res.status(200).json({ success: true, msg: 'Partido eliminado', game: game });
     });
 
